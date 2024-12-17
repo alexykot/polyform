@@ -144,3 +144,24 @@ type Gltf struct {
 	Skins       []Skin       `json:"skins,omitempty"`       // An array of skins.  A skin is defined by joints and matrices.
 	Textures    []Texture    `json:"textures,omitempty"`    // An array of textures
 }
+
+func (t Texture) equal(other Texture) bool {
+	if !ptrIEqual(t.Source, other.Source) || !ptrIEqual(t.Sampler, other.Sampler) {
+		return false
+	}
+	if len(t.Extensions) != len(other.Extensions) {
+		return false
+	}
+
+	for key, val := range t.Extensions {
+		if other.Extensions[key] != val {
+			return false
+		}
+	}
+
+	if !t.ChildOfRootProperty.equal(other.ChildOfRootProperty) {
+		return false
+	}
+
+	return true
+}

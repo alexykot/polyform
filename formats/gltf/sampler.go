@@ -35,3 +35,50 @@ type Sampler struct {
 	WrapS     SamplerWrap      `json:"wrapS,omitempty"`     // S (U) wrapping mode.  All valid values correspond to WebGL enums.
 	WrapT     SamplerWrap      `json:"wrapT,omitempty"`     // T (V) wrapping mode.
 }
+
+func (s *Sampler) equal(other *Sampler) bool {
+	if s == other { // Either both nil or point to the same object
+		return true
+	}
+
+	if s == nil || other == nil { // only one can be nil at this point
+		return false
+	}
+
+	if s.MagFilter != other.MagFilter || s.MinFilter != other.MinFilter ||
+		s.WrapS != other.WrapS || s.WrapT != other.WrapT {
+		return false
+	}
+
+	if !s.ChildOfRootProperty.equal(other.ChildOfRootProperty) {
+		return false
+	}
+
+	return true
+}
+
+func (s ChildOfRootProperty) equal(other ChildOfRootProperty) bool {
+	if s.Name != other.Name {
+		return false
+	}
+	if len(s.Extensions) != len(other.Extensions) {
+		return false
+	}
+	if len(s.Extras) != len(other.Extras) {
+		return false
+	}
+
+	for key, val := range s.Extensions {
+		if other.Extensions[key] != val {
+			return false
+		}
+	}
+
+	for key, val := range s.Extras {
+		if other.Extras[key] != val {
+			return false
+		}
+	}
+
+	return true
+}
